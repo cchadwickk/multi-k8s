@@ -15,7 +15,7 @@ after_success:
   - docker build -t cchadwickk/multi-server ./server
   - docker build -t cchadwickk/multi-worker ./worker
   #Login to docker hub
-  - echo "$docker-pass" | docker login -u "$docker-id" --password-stdin 
+  - echo "$DOCKER_PASS" | docker login -u "$DOCKER_ID" --password-stdin 
   #Push to docker hub
   - docker push cchadwickk/multi-client
   - docker push cchadwickk/multi-nginx

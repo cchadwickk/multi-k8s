@@ -1,0 +1,23 @@
+language: generic 
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t cchadwickk/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true cchadwickk/react-test npm test
+
+after_success:
+  - docker build -t cchadwickk/multi-client ./client
+  - docker build -t cchadwickk/multi-nginx ./nginx
+  - docker build -t cchadwickk/multi-server ./server
+  - docker build -t cchadwickk/multi-worker ./worker
+  #Login to docker hub
+  - echo "$docker-pass" | docker login -u "$docker-id" --password-stdin 
+  #Push to docker hub
+  - docker push cchadwickk/multi-client
+  - docker push cchadwickk/multi-nginx
+  - docker push cchadwickk/multi-server
+  - docker push cchadwickk/multi-worker

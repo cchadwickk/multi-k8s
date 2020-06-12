@@ -8,7 +8,7 @@ import Fib from './Fib';
 function App() {
   return (
     <Router>
-      <div style="margin:auto">
+      <div>
         <header>
           {/* <img src={logo} className="App-logo" alt="logo" /> */}
           <h3>Fibonacci Calculator</h3>

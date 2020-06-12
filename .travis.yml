@@ -21,3 +21,15 @@ after_success:
   - docker push cchadwickk/multi-nginx
   - docker push cchadwickk/multi-server
   - docker push cchadwickk/multi-worker
+deploy:
+  provider: elasticbeanstalk
+  region: us-west-2
+  app: multi-docker
+  env: MultiDocker-env
+  bucket_name: elasticbeanstalk-us-west-2-232632796962
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_KEY_ID
+  secret_access_key:
+    secure: $AWS_SECRET_KEY

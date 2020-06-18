@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: server
+  template:
+    metadata:
+      labels:
+        component: server
+    spec:
+      containers:
+        - name: server
+          image: cchadwickk/multi-server
+          ports:
+            - containerPort: 5000
+          env:
+            - name: REDIS_HOST
+              value: redis-clusterip-service
+            - name: REDIS_PORT
+              value: '6379'
+            - name: PGGUSER
+              value: postgres
+            - name: PGGHOST
+              value: postgres-clusterip-service
+            - name: PGGPORT
+              value: '5432'
+            - name: PGGDATABASE
+              value: postgres
+            - name: PGGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pggpassword
+                  key: PGGPASSWORD 

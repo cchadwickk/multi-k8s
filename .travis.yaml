@@ -1,8 +1,27 @@
 sudo: required
 services:
   - docker
+env:
+  global:
+    - SHA=$(git rev-parse HEAD)
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 before_install:
+  - openssl aes-256-cbc -K $encrypted_9fa90a7cd66c_key -iv $encrypted_9fa90a7cd66c_iv -in multi-k8s-280723-8692bcf7d7e6.json.enc -out multi-k8s-280723-8692bcf7d7e6.json -d
   - curl https://sdk.cloud.google.com | bash > /dev/null;
   - source $HOME/google-cloud-sdk/path.bash.inc
   - gcloud components update kubectl
-  - gcloud auth activate-service-account --key-file service-account.json
+  - gcloud auth activate-service-account --key-file multi-k8s-280723-8692bcf7d7e6.json
+  - gcloud config set project multi-k8s-280723
+  - gcloud config set compute/zone us-central1-a
+  - gcloud config set clusters get-credentials multi-cluster
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker build -t cchadwickk/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true cchadwickk/react-test npm run test
+
+deploy:
+  provider: script
+  script: bash ./deploy.sh
+  on:
+    branch: master
